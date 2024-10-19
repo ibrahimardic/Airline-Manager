@@ -50,12 +50,12 @@ def RetrieveAircraftView(request, pk):
         serializer = AircraftSerializer(aircraft, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) # IF not valid
     
     elif request.method == 'DELETE':
         aircraft.delete()
-        return Response(status=status.HTTP_200_OK)  # No content, no data returned
+        return Response(status=status.HTTP_204_NO_CONTENT)  # No content, no data returned
 
 
 @api_view(['GET', 'PATCH', 'DELETE'])
@@ -80,4 +80,4 @@ def RetrieveAirlineView(request,pk):
     elif request.method == 'DELETE':
         airline.delete()
 
-        return Response(status=status.HTTP_200_OK) 
+        return Response(status=status.HTTP_204_NO_CONTENT) 

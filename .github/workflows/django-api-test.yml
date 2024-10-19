@@ -1,19 +1,15 @@
-name: Api Test Workflow
+name: Airline CRUD Operations
 
 on:
-
   push:
-
     branches:
-      - 'airlines'
+      - 'main'
+
 jobs:
-
   test:
-
     runs-on: ubuntu-latest
 
     steps:
-
     - name: Get code
       uses: actions/checkout@v4
 
@@ -30,6 +26,9 @@ jobs:
     - name: Apply Migrations
       run: python manage.py migrate
 
+    - name: Install Newman
+      run: npm install -g newman
+
     - name: Run server in Background
       run: |
         python manage.py runserver 127.0.0.1:8000 & 
@@ -37,7 +36,11 @@ jobs:
     - name: Wait for server to start
       run: sleep 10
     
-    - name: Test endpoints with Curl
-      run: | 
-        curl --fail http://127.0.0.1:8000/airline/ || exit 1
-        curl --fail http://127.0.0.1:8000/aircraft/ || exit 1
+    - name: Run Postman Tests
+      run: |
+        newman run tests/Airline_Crud_Operations.json --delay-request 1000 
+    # --delay-request to avoid overloading the server
+    
+    - name: Stop Server After Tests
+      run: |
+        fuser -k 8000/tcp
