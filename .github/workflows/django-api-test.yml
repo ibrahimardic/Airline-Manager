@@ -1,0 +1,43 @@
+name: Api Test Workflow
+
+on:
+
+  push:
+
+    branches:
+      - 'airlines'
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Get code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Apply Migrations
+      run: python manage.py migrate
+
+    - name: Run server in Background
+      run: |
+        python manage.py runserver 127.0.0.1:8000 & 
+  
+    - name: Wait for server to start
+      run: sleep 10
+    
+    - name: Test endpoints with Curl
+      run: | 
+        curl --fail http://127.0.0.1:8000/airline/ || exit 1
+        curl --fail http://127.0.0.1:8000/aircraft/ || exit 1
