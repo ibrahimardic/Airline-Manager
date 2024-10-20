@@ -1,11 +1,66 @@
 {
 	"info": {
-		"_postman_id": "014d2e1a-e3d0-4587-b0ae-cf73b40a1d57",
-		"name": "Airline Crud Operations",
+		"_postman_id": "e6e2bef8-34af-418e-a53d-1a0a43f852e6",
+		"name": "Airline REST API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "37635000"
 	},
 	"item": [
+		{
+			"name": "Obtain Authentication Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Got a token\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.collectionVariables.set(\"token\", jsonData.access); ",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI5MTc3MTczLCJpYXQiOjE3MjkxNzY4NzMsImp0aSI6IjQyODRhYTIyZWRiMDQ2NWRhMTY3MTc0YTEzOWZlNzMyIiwidXNlcl9pZCI6MX0.VHzMDIqucbusZkrclciDmCRWL72ya3cxt6qj6lIqAyo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"testpass\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api-token-auth/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api-token-auth",
+						""
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "Create an Airline",
 			"event": [
@@ -19,8 +74,8 @@
 							"pm.test(\"Created an Airline\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.name).to.eql(\"Turkish Airlines\");",
-							"    pm.environment.set(\"airline_id\", jsonData.id);",
-							"    pm.environment.set(\"airline_name\", jsonData.name);",
+							"    pm.collectionVariables.set(\"airline_id\", jsonData.id);",
+							"    pm.collectionVariables.set(\"airline_name\", jsonData.name);",
 							"});"
 						],
 						"type": "text/javascript",
@@ -40,7 +95,14 @@
 			],
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
@@ -97,9 +159,6 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "noauth"
-				},
 				"method": "PATCH",
 				"header": [],
 				"body": {
@@ -136,7 +195,7 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"pm.test(\"Retrieved an Airline\", function () {",
-							"    var airlineName = pm.environment.get(\"airline_name\");",
+							"    var airlineName = pm.collectionVariables.get(\"airline_name\");",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.name).to.eql(airlineName);",
 							"    pm.expect(jsonData.aircraft_set).to.eql([]);",
@@ -149,7 +208,14 @@
 			],
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
@@ -185,7 +251,14 @@
 			],
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
@@ -215,7 +288,8 @@
 							"pm.test(\"Created an Airline\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.manufacturer_serial_number).to.eql(\"4629\");",
-							"    pm.environment.set(\"aircraft_id\", jsonData.id);",
+							"    pm.collectionVariables.set(\"aircraft_id\", jsonData.id);",
+							"    pm.collectionVariables.set(\"aircraft_type\", jsonData.type);",
 							"});"
 						],
 						"type": "text/javascript",
@@ -235,7 +309,14 @@
 			],
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
@@ -293,7 +374,14 @@
 			],
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PATCH",
 				"header": [],
@@ -331,9 +419,9 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"pm.test(\"Retrieved an Aircraft\", function () {",
-							"    var aircraftType = pm.environment.get(\"aircraft_type\");",
+							"    var aircraftType = pm.collectionVariables.get(\"aircraft_type\");",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.type).to.eql(\"Airbus\");",
+							"    pm.expect(jsonData.type).to.eql(aircraftType);",
 							"});"
 						],
 						"type": "text/javascript",
@@ -343,7 +431,14 @@
 			],
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
@@ -389,7 +484,14 @@
 			],
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
@@ -445,7 +547,14 @@
 			],
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
@@ -473,12 +582,21 @@
 			"response": []
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
 				"type": "text/javascript",
-				"packages": {},
 				"exec": [
 					""
 				]
@@ -488,7 +606,6 @@
 			"listen": "test",
 			"script": {
 				"type": "text/javascript",
-				"packages": {},
 				"exec": [
 					""
 				]
@@ -497,23 +614,32 @@
 	],
 	"variable": [
 		{
-			"key": "url",
-			"value": "http://127.0.0.1:8000",
-			"type": "default"
+			"key": "token",
+			"value": "token",
+			"type": "string"
 		},
 		{
-			"key": "airline_id",
-			"value": "airline_id",
-			"type": "default"
+			"key": "url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
 		},
 		{
 			"key": "aircraft_id",
-			"value": "aircraft_id",
-			"type": "default"
+			"value": "aircraft_id"
+		},
+		{
+			"key": "airline_id",
+			"value": "airline_id"
 		},
 		{
 			"key": "airline_name",
-			"value": ""
+			"value": "airline_name",
+			"type": "string"
+		},
+		{
+			"key": "aircraft_type",
+			"value": "aircraft_type",
+			"type": "string"
 		}
 	]
 }
