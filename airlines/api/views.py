@@ -1,12 +1,14 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from airlines.models import Airline, Aircraft
 from airlines.api.serializers import AirlineSerializer, AircraftSerializer
 from django.shortcuts import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 
 
 @api_view(['GET','POST'])
+@permission_classes([IsAuthenticated])
 def AirlinesView(request):
 
     if request.method == 'GET':
@@ -24,6 +26,7 @@ def AirlinesView(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) # IF not valid
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def AirCraftsView(request):
     if request.method == 'GET':
         aircrafts = Aircraft.objects.all()
@@ -38,6 +41,7 @@ def AirCraftsView(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) # IF not valid    
 
 @api_view(['GET','DELETE', 'PATCH'])
+@permission_classes([IsAuthenticated])
 def RetrieveAircraftView(request, pk):
 
     aircraft = get_object_or_404(Aircraft, id=pk)
@@ -59,6 +63,7 @@ def RetrieveAircraftView(request, pk):
 
 
 @api_view(['GET', 'PATCH', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def RetrieveAirlineView(request,pk):
     airline = get_object_or_404(Airline, id=pk)
 
