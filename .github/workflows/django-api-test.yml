@@ -61,7 +61,7 @@ jobs:
         run: |
           . venv/bin/activate
           pip install flake8 
-          flake8 .  --exclude=migrations,__pycache__,env,venv
+          flake8 . --max-line-length=88 --exclude=migrations,__pycache__,env,venv
       
       - name: Check Code Formatting
         run: |
