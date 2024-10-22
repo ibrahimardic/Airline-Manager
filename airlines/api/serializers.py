@@ -4,15 +4,13 @@ from airlines.models import Airline, Aircraft
 
 
 class AircraftSerializer(serializers.Serializer):
-    id = serializers.UUIDField(
-        default=uuid.uuid4, read_only=True
-    )  # UUID is read-only and automatically generated
+    id = serializers.UUIDField(default=uuid.uuid4, read_only=True)
     manufacturer_serial_number = serializers.CharField(max_length=100)
     type = serializers.CharField(max_length=100)
     model = serializers.CharField(max_length=100)
     operator_airline = serializers.PrimaryKeyRelatedField(
         queryset=Airline.objects.all()
-    )  # Handling the ForeignKey field properly
+    )
     number_of_engines = serializers.IntegerField()
 
     def create(self, validated_data):
@@ -35,7 +33,7 @@ class AircraftSerializer(serializers.Serializer):
         return instance
 
     class Meta:
-        model = Aircraft  # Ensure you have an Aircraft model
+        model = Aircraft
         fields = [
             "id",
             "manufacturer_serial_number",
@@ -50,9 +48,7 @@ class AircraftSerializer(serializers.Serializer):
 
 
 class AirlineSerializer(serializers.Serializer):
-    id = serializers.UUIDField(
-        default=uuid.uuid4, read_only=True
-    )  # 'primary_key=True' should be set in the model, not the serializer
+    id = serializers.UUIDField(default=uuid.uuid4, read_only=True)
     name = serializers.CharField(max_length=100)
     callsign = serializers.CharField(max_length=100)
     founded_year = serializers.IntegerField()
@@ -75,10 +71,10 @@ class AirlineSerializer(serializers.Serializer):
         return instance
 
     class Meta:
-        model = Airline  # Ensure you have an Airline model
+        model = Airline
         fields = ["id", "name", "callsign", "founded_year", "base_airport"]
 
     def __str__(
         self,
-    ):  # To display the name in admin panel, typically done in the model
+    ):
         return self.name

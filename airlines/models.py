@@ -7,7 +7,7 @@ class Airline(models.Model):
     name = models.CharField(max_length=100)
     callsign = models.CharField(max_length=100)
     founded_year = models.IntegerField()
-    base_airport = models.CharField(max_length=3)  # IATA cod
+    base_airport = models.CharField(max_length=3)  # IATA code
 
     def __str__(self):  # To see the name on table.
         return self.name

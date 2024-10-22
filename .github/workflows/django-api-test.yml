@@ -42,6 +42,22 @@ jobs:
 
       - name: Install Newman
         run: npm install -g newman
+        
+  model-test:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v4
+      - name: Restore Cached Dependencies
+        uses: actions/cache@v4
+        with:
+          path: venv
+          key: venv-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+      - name: Run pytest
+        run: |
+          source venv/bin/activate
+          pytest --ds=AirlineManager.settings --cov=AirlineManager
 
   lint:
     runs-on: ubuntu-latest
@@ -60,18 +76,16 @@ jobs:
       - name: Run Flake8 
         run: |
           . venv/bin/activate
-          pip install flake8 
           flake8 . --max-line-length=88 --exclude=migrations,__pycache__,env,venv
       
       - name: Check Code Formatting
         run: |
           . venv/bin/activate
-          pip install black
           black --check .
 
   airline_tests:
     runs-on: ubuntu-latest
-    needs: [setup,lint]
+    needs: [setup, lint, model-test]
 
     steps:
       - name: Get Code
@@ -101,7 +115,7 @@ jobs:
 
   authentication_tests:
     runs-on: ubuntu-latest
-    needs: [setup, lint]
+    needs: [setup, lint, model-test]
     steps:
       - name: Get Code
         uses: actions/checkout@v4
