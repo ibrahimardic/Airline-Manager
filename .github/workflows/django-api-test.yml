@@ -103,7 +103,11 @@ jobs:
           python manage.py runserver 0.0.0.0:8000 &
 
       - name: Wait for Server to Start
-        run: sleep 10
+        run: |
+          until curl -s http://127.0.0.1:8000; do
+            echo "Waiting for server to be available..."
+            sleep 5
+          done
 
       - name: Run Airline CRUD Postman Tests
         run: |
@@ -111,7 +115,7 @@ jobs:
 
       - name: Stop Server After Tests
         run: |
-          fuser -k 8000/tcp
+          pkill -f manage.py
 
   authentication_tests:
     runs-on: ubuntu-latest
@@ -132,7 +136,11 @@ jobs:
           python manage.py runserver 0.0.0.0:8000 &
 
       - name: Wait for Server to Start
-        run: sleep 10
+        run: |
+          until curl -s http://127.0.0.1:8000; do
+            echo "Waiting for server to be available..."
+            sleep 5
+          done
 
       - name: Run Authentication Postman Tests
         run: |
@@ -140,4 +148,4 @@ jobs:
 
       - name: Stop Server After Tests
         run: |
-          fuser -k 8000/tcp
+          pkill -f manage.py
