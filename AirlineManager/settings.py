@@ -29,7 +29,7 @@ DEBUG = True
 
 load_dotenv()
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = ['13.49.23.160','localhost','127.0.0.1']
 
 
 # Application definition
