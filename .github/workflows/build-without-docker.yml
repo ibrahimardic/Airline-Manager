@@ -1,4 +1,4 @@
-name: Airline CRUD and Authentication Tests
+name: Building without docker
 
 on: ['workflow_dispatch']
 
