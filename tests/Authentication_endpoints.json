@@ -1,13 +1,13 @@
 {
 	"info": {
 		"_postman_id": "f9363ce5-e9da-44ba-afa7-46c2fef7c248",
-		"name": "New Collection",
+		"name": "Authentication Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "37635000"
 	},
 	"item": [
 		{
-			"name": "Registering Existing User",
+			"name": "Registering Existing User (Same username)",
 			"event": [
 				{
 					"listen": "test",
@@ -17,7 +17,7 @@
 							"    pm.expect(pm.response.code).to.be.oneOf([400]);\r",
 							"});\r",
 							"\r",
-							"pm.test(\"Registering existing user\", function () {\r",
+							"pm.test(\"Registering existing user (Same username)\", function () {\r",
 							"    var jsonData = pm.response.json();\r",
 							"    pm.expect(jsonData.error).to.eql(\"Username already exists\");\r",
 							"});"
@@ -43,6 +43,63 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n  \"username\": \"testuser\",\r\n  \"password\": \"testpass\",\r\n  \"email\": \"test@example.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_}}/api/register/",
+					"host": [
+						"{{url_}}"
+					],
+					"path": [
+						"api",
+						"register",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Registering Existing User (Same email)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([400]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Registering existing user (Same email)\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.error).to.eql(\"Email already exists\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token d1ba1435df60762aee2753a3e30462086b2d77b7",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"testuser1\",\r\n  \"password\": \"testpass\",\r\n  \"email\": \"test@example.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -111,6 +168,63 @@
 					"path": [
 						"api",
 						"register",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log In Non-Existing User",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const nonexistingusername = `user_${new Date().getTime()}`;\r",
+							"pm.collectionVariables.set(\"nonexistingusername\", nonexistingusername);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});\r",
+							"pm.test(\"Log In non-existing user\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.error).to.eql(\"Invalid credentials\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"{{nonexistingusername}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url_}}/api/login/",
+					"host": [
+						"{{url_}}"
+					],
+					"path": [
+						"api",
+						"login",
 						""
 					]
 				}
@@ -273,6 +387,10 @@
 		},
 		{
 			"key": "refresh",
+			"value": ""
+		},
+		{
+			"key": "nonexistingusername",
 			"value": ""
 		}
 	]
