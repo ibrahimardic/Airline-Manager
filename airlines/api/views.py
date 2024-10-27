@@ -5,6 +5,7 @@ from airlines.models import Airline, Aircraft
 from airlines.api.serializers import AirlineSerializer, AircraftSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from django.db import IntegrityError
 
 
 @api_view(["GET", "POST"])
@@ -22,8 +23,13 @@ def AirlinesView(request):
         serializer = AirlineSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except IntegrityError as e:
+                return Response(
+                    {"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+                )
 
         return Response(
             serializer.errors, status=status.HTTP_400_BAD_REQUEST
@@ -41,8 +47,14 @@ def AirCraftsView(request):
     elif request.method == "POST":
         serializer = AircraftSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except IntegrityError as e:
+                return Response(
+                    {"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+                )
+
         return Response(
             serializer.errors, status=status.HTTP_400_BAD_REQUEST
         )  # IF not valid
@@ -61,17 +73,20 @@ def RetrieveAircraftView(request, pk):
     elif request.method == "PATCH":
         serializer = AircraftSerializer(aircraft, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except IntegrityError as e:
+                return Response(
+                    {"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+                )
         return Response(
             serializer.errors, status=status.HTTP_400_BAD_REQUEST
         )  # IF not valid
 
     elif request.method == "DELETE":
         aircraft.delete()
-        return Response(
-            status=status.HTTP_204_NO_CONTENT
-        )  # No content, no data returned
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["GET", "PATCH", "DELETE"])
@@ -89,8 +104,13 @@ def RetrieveAirlineView(request, pk):
         serializer = AirlineSerializer(airline, data=request.data, partial=True)
 
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except IntegrityError as e:
+                return Response(
+                    {"error": f"{str(e)}"}, status=status.HTTP_400_BAD_REQUEST
+                )
 
         return Response(
             serializer.errors, status=status.HTTP_400_BAD_REQUEST
