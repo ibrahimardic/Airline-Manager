@@ -19,7 +19,8 @@
 							"pm.test(\"Got a token\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.collectionVariables.set(\"token\", jsonData.access); ",
-							"});"
+							"});",
+							""
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -129,6 +130,71 @@
 			"response": []
 		},
 		{
+			"name": "Prevent Duplicating an Airline",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Prevent Duplicating Airline\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.error).to.eql(\"UNIQUE constraint failed: airlines_airline.name\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Turkish Airlines\",\n    \"callsign\": \"TURKISH\",\n    \"founded_year\": 1933,\n    \"base_airport\": \"IST\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/airline/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"airline",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Update an Airline",
 			"event": [
 				{
@@ -138,7 +204,7 @@
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
-							"pm.test(\"Created an Airline\", function () {",
+							"pm.test(\"Updated an Airline\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.founded_year).to.eql(1984);",
 							"});"
@@ -164,6 +230,62 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"founded_year\": 1984\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/airline/{{airline_id}}/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"airline",
+						"{{airline_id}}",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an Airline (Prevent Callsign Duplication)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Prevent Callsign Duplication\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.error).to.eql(\"UNIQUE constraint failed: airlines_airline.callsign\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"callsign\": \"LH\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -343,6 +465,126 @@
 			"response": []
 		},
 		{
+			"name": "Prevent Duplicating an Aircraft",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"pm.test(\"Prevent Duplicating aircraft\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.error).to.eql(\"UNIQUE constraint failed: airlines_aircraft.manufacturer_serial_number\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"manufacturer_serial_number\": \"4629\",\r\n    \"type\": \"Airbus\",\r\n    \"model\": \"Airbus A319-132\",\r\n    \"operator_airline\": \"{{airline_id}}\",\r\n    \"number_of_engines\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/aircraft/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"aircraft",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create an Aircraft Without Airline",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code 400\", function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"pm.test(\"Not creating aircraft without airline\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.operator_airline).to.deep.equal([\"This field may not be null.\"]);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"manufacturer_serial_number\": \"4629\",\n    \"type\": \"Airbus\",\n    \"model\": \"Airbus A319-132\",\n    \"operator_airline\": \"\",\n    \"number_of_engines\": 2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/aircraft/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"aircraft",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Update an Aircraft",
 			"event": [
 				{
@@ -352,7 +594,7 @@
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
-							"pm.test(\"Created an Airline\", function () {",
+							"pm.test(\"Updated an Airline\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.manufacturer_serial_number).to.eql(\"2033\");",
 							"});"
@@ -388,6 +630,62 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"manufacturer_serial_number\": \"2033\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/aircraft/{{aircraft_id}}/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"aircraft",
+						"{{aircraft_id}}",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update an Aircraft (Prevent MSN Duplication)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"pm.test(\"Prevent MSN Duplication\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.error).to.eql(\"UNIQUE constraint failed: airlines_aircraft.manufacturer_serial_number\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"manufacturer_serial_number\": \"1234\" // Existing in database\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
