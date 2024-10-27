@@ -4,8 +4,8 @@ import uuid
 
 class Airline(models.Model):
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True)
-    name = models.CharField(max_length=100)
-    callsign = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
+    callsign = models.CharField(max_length=100, unique=True)
     founded_year = models.IntegerField()
     base_airport = models.CharField(max_length=3)  # IATA code
 
@@ -17,7 +17,7 @@ class Aircraft(models.Model):
     id = models.UUIDField(
         default=uuid.uuid4, unique=True, primary_key=True, editable=False
     )
-    manufacturer_serial_number = models.CharField(max_length=100)
+    manufacturer_serial_number = models.CharField(max_length=100, unique=True)
     type = models.CharField(max_length=100)
     model = models.CharField(max_length=100)
     operator_airline = models.ForeignKey(
