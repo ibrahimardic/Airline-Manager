@@ -51,7 +51,6 @@ Airline-Manager/
 ├── .github/                     # CI/CD workflows
 │   └── workflows/
 │       ├── build-and-deploy.yml
-│       └── build-without-docker.yml
 │
 ├── dockerfile                   # Docker configuration file
 ├── manage.py                    # Django management script
@@ -169,8 +168,7 @@ List all aircrafts and create new aircraft. (Airline reference is required to cr
 
 * The project uses **GitHub Actions** for continuous integration and deployment.
 * Workflows available:
-    * **build-and-deploy.yml:** Deploys the Dockerized project to an AWS EC2 instance. (Main workflow)
-    * **build-without-docker.yml:** Runs tests and builds without Docker.
+    * **build-and-deploy.yml:** Deploys the Dockerized project to an AWS EC2 instance.
 
 ## Deployment
 
