@@ -59,7 +59,7 @@ jobs:
 
       - name: Run Pytest
         run: |
-          docker exec $(docker ps -q --filter "ancestor=ibrahimardic/airline-manager:latest") bash -c "source venv/bin/activate && pytest --ds=AirlineManager.settings"
+          docker exec $(docker ps -q --filter "ancestor=ibrahimardic/airline-manager:latest") bash -c "pytest --ds=AirlineManager.settings"
 
       - name: Stop Container 
         run: |
